@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Leads</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f6f9;
+        }
+
+        .sidebar{
+            position:fixed;
+            left:0;
+            top:0;
+            width:220px;
+            height:100vh;
+            background:#1f2937;
+            padding:20px;
+        }
+
+        .sidebar h2{
+            color:white;
+            text-align:center;
+            margin-bottom:30px;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:12px;
+            margin-bottom:10px;
+            border-radius:5px;
+        }
+
+        .sidebar a:hover{
+            background:#374151;
+        }
+
+        .active{
+            background:#2563eb;
+        }
+
+        .main{
+            margin-left:240px;
+            padding:30px;
+        }
+
+        .header{
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+            margin-bottom:20px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:15px;
+        }
+
+        td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        tr:hover{
+            background:#f5f5f5;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="sidebar">
+
+    <h2>CRM</h2>
+
+    <a href="/dasboard">Dashboard</a>
+    <a href="/add-lead">Add Lead</a>
+    <a href="/leads" class="active">View Leads</a>
+    <a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+    <div class="header">
+    <h2>📋 Lead Management</h2>
+
+    <p style="margin-top:8px;color:#666;">
+        Search, Edit and Manage Business Leads
+    </p>
+</div>
+
+<form method="get" action="/leads" style="margin-bottom:20px;">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search Company Name..."
+        value="{{ search }}"
+        style="
+            padding:10px;
+            width:250px;
+            border:1px solid #ddd;
+            border-radius:5px;
+        "
+    >
+
+    <select
+        name="category"
+        style="
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:5px;
+        "
+    >
+        <option value="">All Categories</option>
+        <option value="Mobile Shop">Mobile Shop</option>
+        <option value="electronic">electronic</option>
+        <option value="dss">dss</option>
+    </select>
+
+    <button
+        type="submit"
+        style="
+            padding:10px 15px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        "
+    >
+        Search
+    </button>
+
+</form>
+    <table>
+
+        <tr>
+           <th>ID</th>
+           <th>Company</th>
+           <th>Mobile</th>
+           <th>Category</th>
+           <th>Group</th>
+          <th>City</th>
+          <th>Action</th>
+        </tr>
+
+        {% for lead in leads %}
+
+        <tr>
+           <tr>
+            <td>{{ lead.id }}</td>
+            <td>{{ lead.company_name }}</td>
+            <td>{{ lead.mobile_number }}</td>
+            <td>{{ lead.category }}</td>
+            <td>{{ lead.group_name }}</td>
+            <td>{{ lead.city }}</td>
+
+    <td>
+       <td>
+
+    <a
+        href="/edit-lead/{{ lead.id }}"
+        style="
+            background:green;
+            color:white;
+            padding:6px 12px;
+            text-decoration:none;
+            border-radius:5px;
+            margin-right:5px;
+        "
+    >
+        Edit
+    </a>
+
+    <a
+        href="/delete-lead/{{ lead.id }}"
+        style="
+            background:red;
+            color:white;
+            padding:6px 12px;
+            text-decoration:none;
+            border-radius:5px;
+        "
+        onclick="return confirm('Delete this lead?')"
+    >
+        Delete
+    </a>
+
+</td>
+        </a>
+    </td>
+</tr>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+</html>

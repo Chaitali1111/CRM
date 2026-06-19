@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Lead</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f6f9;
+            padding:40px;
+        }
+
+        .container{
+            width:600px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        h2{
+            margin-bottom:20px;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin-bottom:15px;
+            border:1px solid #ddd;
+            border-radius:5px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Edit Lead</h2>
+
+    <form action="/update-lead/{{ lead.id }}" method="post">
+
+        <input
+            type="text"
+            name="company_name"
+            value="{{ lead.company_name }}"
+        >
+
+        <input
+            type="text"
+            name="mobile_number"
+            value="{{ lead.mobile_number }}"
+        >
+
+        <input
+            type="text"
+            name="address"
+            value="{{ lead.address }}"
+        >
+
+        <input
+            type="text"
+            name="category"
+            value="{{ lead.category }}"
+        >
+
+        <input
+            type="text"
+            name="group_name"
+            value="{{ lead.group_name }}"
+        >
+
+        <input
+            type="text"
+            name="city"
+            value="{{ lead.city }}"
+        >
+
+        <button type="submit">
+            Update Lead
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
