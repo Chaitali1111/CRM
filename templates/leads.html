@@ -95,83 +95,193 @@
 
     <h2>CRM</h2>
 
-    <a href="/dashboard">Dashboard</a>
-    <a href="/add-lead">Add Lead</a>
-    <a href="/leads" class="active">View Leads</a>
-    <a href="/logout">Logout</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/add-lead">Add Lead</a>
+            <a href="/leads" class="active">View Leads</a>
+            <a href="/groups">Groups</a>
+            <a href="/campaigns">Campaigns</a>
+            <a href="/logout">Logout</a>
 
 </div>
 
 <div class="main">
 
     <div class="header">
-    <h2>📋 Lead Management</h2>
 
-    <p style="margin-top:8px;color:#666;">
-        Search, Edit and Manage Business Leads
-    </p>
-</div>
 
-<form method="get" action="/leads" style="margin-bottom:20px;">
+<div class="header">
 
-    <input
-        type="text"
-        name="search"
-        placeholder="Search Company Name..."
-        value="{{ search }}"
-        style="
-            padding:10px;
-            width:250px;
-            border:1px solid #ddd;
-            border-radius:5px;
-        "
-    >
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:20px;
+    ">
 
-    <select
-        name="category"
-        style="
-            padding:10px;
-            border:1px solid #ddd;
-            border-radius:5px;
-        "
-    >
-        <option value="">All Categories</option>
-        <option value="Mobile Shop">Mobile Shop</option>
-        <option value="electronic">electronic</option>
-        <option value="dss">dss</option>
-    </select>
+        <div>
+            <h2>📋 Lead Management</h2>
 
-    <button
-        type="submit"
-        style="
-            padding:10px 15px;
-            background:#2563eb;
-            color:white;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-        "
-    >
-        Search
-    </button>
+            <p style="
+                margin-top:8px;
+                color:#666;
+            ">
+                Search, Edit and Manage Business Leads
+            </p>
+        </div>
 
-</form>
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+        ">
+
+            <a
+                href="/add-lead"
+                style="
+                    background:#2563eb;
+                    color:white;
+                    padding:14px 40px;
+                    text-decoration:none;
+                    border-radius:8px;
+                    font-weight:bold;
+                    width:180px;
+                    text-align:center;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    min-width:220px;
+                    text-align:center;
+                    display:inline-block;
+                "
+            >
+                ➕ Add Lead
+            </a>
+
+
+            <a
+                href="/export-csv"
+                style="
+                    background:#16a34a;
+                    color:white;
+                    padding:14px 40px;
+                    text-decoration:none;
+                    border-radius:8px;
+                    font-weight:bold;
+                    width:180px;
+                    text-align:center;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    min-width:220px;
+                    text-align:center;
+                    display:inline-block;
+                "
+            >
+                📥 Export CSV
+            </a>
+
+            <form
+                action="/import-csv"
+                method="post"
+                enctype="multipart/form-data"
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                    margin:0;
+                "
+            >
+
+                
+
+                <button
+                    type="submit"
+                    style="
+                        background:#16a34a;
+                        color:white;
+                        border:none;
+                        padding:14px 40px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-weight:bold;
+                        width:180px;
+                        display:flex;
+                        justify-content:center;
+                        align-items:center;
+                        min-width:220px;
+                        text-align:center;
+                        display:inline-block;
+                    "
+                >
+                    📤 Import CSV
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+    <form method="get" action="/leads" style="margin-bottom:20px;">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search Company Name..."
+            value="{{ search }}"
+            style="
+                padding:10px;
+                width:250px;
+                border:1px solid #ddd;
+                border-radius:5px;
+            "
+        >
+
+        <select
+            name="category"
+            style="
+                padding:10px;
+                border:1px solid #ddd;
+                border-radius:5px;
+            "
+        >
+            <option value="">All Categories</option>
+            <option value="Mobile Shop">Mobile Shop</option>
+            <option value="electronic">electronic</option>
+            <option value="dss">dss</option>
+        </select>
+
+        <button
+            type="submit"
+            style="
+                padding:10px 15px;
+                background:#2563eb;
+                color:white;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+            "
+        >
+            Search
+        </button>
+
+    </form>
+
     <table>
 
         <tr>
-           <th>ID</th>
-           <th>Company</th>
-           <th>Mobile</th>
-           <th>Category</th>
-           <th>Group</th>
-          <th>City</th>
-          <th>Action</th>
+            <th>ID</th>
+            <th>Company</th>
+            <th>Mobile</th>
+            <th>Category</th>
+            <th>Group</th>
+            <th>City</th>
+            
         </tr>
 
         {% for lead in leads %}
 
         <tr>
-           <tr>
+
             <td>{{ lead.id }}</td>
             <td>{{ lead.company_name }}</td>
             <td>{{ lead.mobile_number }}</td>
@@ -179,41 +289,12 @@
             <td>{{ lead.group_name }}</td>
             <td>{{ lead.city }}</td>
 
-    <td>
-       <td>
+            <td>
 
-    <a
-        href="/edit-lead/{{ lead.id }}"
-        style="
-            background:green;
-            color:white;
-            padding:6px 12px;
-            text-decoration:none;
-            border-radius:5px;
-            margin-right:5px;
-        "
-    >
-        Edit
-    </a>
+                
 
-    <a
-        href="/delete-lead/{{ lead.id }}"
-        style="
-            background:red;
-            color:white;
-            padding:6px 12px;
-            text-decoration:none;
-            border-radius:5px;
-        "
-        onclick="return confirm('Delete this lead?')"
-    >
-        Delete
-    </a>
+            </td>
 
-</td>
-        </a>
-    </td>
-</tr>
         </tr>
 
         {% endfor %}

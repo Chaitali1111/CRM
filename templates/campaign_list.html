@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campaign List</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            padding:30px;
+            background:#f4f6f9;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        a{
+            text-decoration:none;
+            color:white;
+            background:#16a34a;
+            padding:8px 12px;
+            border-radius:5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h2>📢 Campaign List</h2>
+
+<table>
+
+    <tr>
+        <th>Campaign Name</th>
+        <th>Group</th>
+        <th>PDF</th>
+        <th>Message</th>
+    </tr>
+
+    {% for campaign in campaigns %}
+
+    <tr>
+
+        <td>{{ campaign.campaign_name }}</td>
+
+        <td>{{ campaign.group_name }}</td>
+
+        <td>
+            <a href="/view-pdf/{{ campaign.pdf_file }}" target="_blank">
+                View PDF
+            </a>
+        </td>
+
+        <td>{{ campaign.message_content }}</td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+</html>

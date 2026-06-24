@@ -1,12 +1,16 @@
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form, Depends, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-
+from fastapi import UploadFile, File
+import os
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-
 from app.database import engine, Base, get_db
-from app.models import User, Lead
+from app.models import User, Lead, Campaign
+from fastapi.responses import StreamingResponse
+import csv
+import io
 
 Base.metadata.create_all(bind=engine)
 
@@ -86,11 +90,22 @@ def login_user(
     ).first()
 
     if not user:
-        return {
-            "message": "Invalid Email or Password"
+     return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "error": "Invalid Email or Password"
         }
+    )
 
     total_leads = db.query(Lead).count()
+    total_campaigns = db.query(Campaign).count()
+    total_groups = len(
+    db.query(Lead.group_name)
+    .filter(Lead.group_name != "")
+    .distinct()
+    .all()
+)
     recent_leads = db.query(Lead).order_by(Lead.id.desc()).limit(5).all()
 
     return templates.TemplateResponse(
@@ -99,7 +114,9 @@ def login_user(
         "request": request,
         "user": user,
         "total_leads": total_leads,
-        "recent_leads": recent_leads
+        "total_groups": total_groups,
+        "recent_leads": recent_leads,
+        "total_campaigns": total_campaigns
     }
 )
 
@@ -110,6 +127,14 @@ def dashboard(
 ):
 
     total_leads = db.query(Lead).count()
+    total_campaigns = db.query(Campaign).count()
+    
+    total_groups = len(
+    db.query(Lead.group_name)
+    .filter(Lead.group_name != "")
+    .distinct()
+    .all()
+)
 
     recent_leads = db.query(Lead)\
         .order_by(Lead.id.desc())\
@@ -126,7 +151,9 @@ def dashboard(
                 "role": "Admin"
             },
             "total_leads": total_leads,
-            "recent_leads": recent_leads
+            "total_groups": total_groups,
+            "recent_leads": recent_leads,
+            "total_campaigns": total_campaigns,
         }
     )
     
@@ -205,6 +232,76 @@ def view_leads(
             "category": category
         }
     )
+@app.get("/export-csv")
+def export_csv(
+    db: Session = Depends(get_db)
+):
+
+    leads = db.query(Lead).all()
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "ID",
+        "Company",
+        "Mobile",
+        "Category",
+        "Group",
+        "City"
+    ])
+
+    for lead in leads:
+        writer.writerow([
+            lead.id,
+            lead.company_name,
+            lead.mobile_number,
+            lead.category,
+            lead.group_name,
+            lead.city
+        ])
+
+    output.seek(0)
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=leads.csv"
+        }
+    )
+
+@app.post("/import-csv")
+def import_csv(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+
+    contents = file.file.read().decode("utf-8")
+
+    csv_reader = csv.DictReader(io.StringIO(contents))
+
+    for row in csv_reader:
+
+        new_lead = Lead(
+            company_name=row.get("Company", ""),
+            mobile_number=row.get("Mobile", ""),
+            category=row.get("Category", ""),
+            group_name=row.get("Group", ""),
+            city=row.get("City", ""),
+            address=""
+        )
+
+        db.add(new_lead)
+
+    db.commit()
+
+    return RedirectResponse(
+        url="/leads",
+        status_code=303
+    )
 
 @app.get("/delete-lead/{lead_id}")
 def delete_lead(
@@ -249,24 +346,7 @@ def logout():
         url="/",
         status_code=303
     )
-@app.get("/edit-lead/{lead_id}")
-def edit_lead_page(
-    lead_id: int,
-    request: Request,
-    db: Session = Depends(get_db)
-):
 
-    lead = db.query(Lead).filter(
-        Lead.id == lead_id
-    ).first()
-
-    return templates.TemplateResponse(
-        "edit_lead.html",
-        {
-            "request": request,
-            "lead": lead
-        }
-    )
 
 @app.post("/update-lead/{lead_id}")
 def update_lead(
@@ -299,3 +379,166 @@ def update_lead(
     )
 
 
+@app.get("/groups")
+def view_groups(
+    request: Request,
+    search: str = "",
+    db: Session = Depends(get_db)
+):
+
+    leads = db.query(Lead).all()
+
+    group_data = {}
+
+    for lead in leads:
+
+        group = lead.group_name
+
+        if group:
+
+            if search and search.lower() not in group.lower():
+                continue
+
+            if group not in group_data:
+                group_data[group] = 0
+
+            group_data[group] += 1
+
+    return templates.TemplateResponse(
+        "groups.html",
+        {
+            "request": request,
+            "group_data": group_data,
+            "search": search
+        }
+    )
+
+    leads = db.query(Lead).all()
+
+    group_data = {}
+
+    for lead in leads:
+        group = lead.group_name
+
+        if group:
+            if group not in group_data:
+                group_data[group] = 0
+
+            group_data[group] += 1
+
+    return templates.TemplateResponse(
+        "groups.html",
+        {
+            "request": request,
+            "group_data": group_data
+        }
+    )
+
+
+@app.get("/group-leads/{group_name}")
+def group_leads(
+    group_name: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    leads = db.query(Lead).filter(
+        Lead.group_name == group_name
+    ).all()
+
+    return templates.TemplateResponse(
+        "group_leads.html",
+        {
+            "request": request,
+            "group_name": group_name,
+            "leads": leads
+        }
+    )
+
+
+@app.get("/campaigns")
+def campaigns(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    groups = db.query(Lead.group_name)\
+        .distinct()\
+        .filter(Lead.group_name != "")\
+        .all()
+
+    return templates.TemplateResponse(
+        "campaigns.html",
+        {
+            "request": request,
+            "groups": groups
+        }
+    )
+
+
+
+@app.post("/save-campaign")
+def save_campaign(
+    campaign_name: str = Form(...),
+    group_name: str = Form(...),
+    message_content: str = Form(""),
+    pdf_file: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+
+    filename = ""
+
+    if pdf_file and pdf_file.filename:
+
+     os.makedirs("uploads", exist_ok=True)
+
+     filename = pdf_file.filename
+
+     file_path = os.path.join("uploads", filename)
+
+     with open(file_path, "wb") as buffer:
+        buffer.write(pdf_file.file.read())
+
+    new_campaign = Campaign(
+        campaign_name=campaign_name,
+        group_name=group_name,
+        message_content=message_content,
+        pdf_file=filename
+    )
+
+    db.add(new_campaign)
+    db.commit()
+
+    return RedirectResponse(
+        url="/campaigns",
+        status_code=303
+    )
+
+
+@app.get("/campaign-list")
+def campaign_list(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    campaigns = db.query(Campaign).all()
+
+    return templates.TemplateResponse(
+        "campaign_list.html",
+        {
+            "request": request,
+            "campaigns": campaigns
+        }
+    )
+
+
+@app.get("/view-pdf/{filename}")
+def view_pdf(filename: str):
+
+    file_path = os.path.join("uploads", filename)
+
+    return FileResponse(
+        path=file_path,
+        media_type="application/pdf"
+
+    )

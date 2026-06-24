@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Management</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Segoe UI',sans-serif;
+            background:#f4f6f9;
+            padding:30px;
+        }
+
+        .header{
+            background:linear-gradient(135deg,#2563eb,#1e3a8a);
+            color:white;
+            padding:25px;
+            border-radius:15px;
+            margin-bottom:25px;
+        }
+
+        .header h1{
+            margin-bottom:8px;
+        }
+
+        .cards{
+            display:flex;
+            gap:20px;
+            margin-bottom:25px;
+        }
+
+        .card{
+            flex:1;
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            text-align:center;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .card h3{
+            color:#666;
+            margin-bottom:10px;
+        }
+
+        .card h1{
+            color:#2563eb;
+            font-size:40px;
+        }
+
+        .search-box{
+            width:100%;
+            padding:12px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            margin-bottom:20px;
+            font-size:15px;
+        }
+
+        .table-card{
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:12px;
+            text-align:left;
+        }
+
+        td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        tr:hover{
+            background:#f8fafc;
+        }
+
+        .back-btn{
+            display:inline-block;
+            margin-top:20px;
+            background:#2563eb;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:10px;
+        }
+
+        .back-btn:hover{
+            background:#1d4ed8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>📂 Group Management</h1>
+
+    <p>View and manage all lead groups</p>
+
+</div>
+
+<div class="cards">
+
+    <div class="card">
+        <h3>Total Groups</h3>
+        <h1>{{ group_data|length }}</h1>
+    </div>
+
+    <div class="card">
+        <h3>Total Leads</h3>
+        <h1>
+            {% set total = 0 %}
+            {% for group, count in group_data.items() %}
+                {% set total = total + count %}
+            {% endfor %}
+            {{ group_data.values()|sum }}
+        </h1>
+    </div>
+
+</div>
+
+<form method="get" action="/groups">
+
+    <input
+        type="text"
+        name="search"
+        class="search-box"
+        placeholder="Search Group..."
+        value="{{ search }}"
+    >
+
+</form>
+
+<div class="table-card">
+
+    <table>
+
+        <tr>
+            <th>Group Name</th>
+            <th>Total Leads</th>
+        </tr>
+
+        {% for group, count in group_data.items() %}
+
+        <tr>
+            <td>
+                <a href="/group-leads/{{ group }}"
+               style="text-decoration:none;color:#2563eb;font-weight:bold;">
+               {{ group }}
+                </a>
+            </td>
+            <td>{{ count }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+<a href="/dashboard" class="back-btn">
+    ← Back to Dashboard
+</a>
+
+</body>
+</html>

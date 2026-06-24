@@ -23,3 +23,13 @@ class Lead(Base):
     category = Column(String)
     group_name = Column(String)
     city = Column(String)
+
+
+class Campaign(Base):
+     __tablename__ = "campaigns"
+
+     id = Column(Integer, primary_key=True, index=True)
+     campaign_name = Column(String)
+     group_name = Column(String)
+     message_content = Column(String)
+     pdf_file = Column(String)

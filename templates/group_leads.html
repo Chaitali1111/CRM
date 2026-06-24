@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Leads</title>
+
+    <style>
+
+        body{
+            font-family:'Segoe UI',sans-serif;
+            background:#f4f6f9;
+            padding:30px;
+        }
+
+        .header{
+            background:#2563eb;
+            color:white;
+            padding:20px;
+            border-radius:12px;
+            margin-bottom:20px;
+        }
+
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:12px;
+            text-align:left;
+        }
+
+        td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        .btn{
+            display:inline-block;
+            margin-top:20px;
+            background:#2563eb;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h2>{{ group_name }}</h2>
+    <p>Group Leads</p>
+
+</div>
+
+<div class="card">
+
+<table>
+
+<tr>
+    <th>Company</th>
+    <th>Mobile</th>
+    <th>City</th>
+</tr>
+
+{% for lead in leads %}
+
+<tr>
+    <td>{{ lead.company_name }}</td>
+    <td>{{ lead.mobile_number }}</td>
+    <td>{{ lead.city }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+<a href="/groups" class="btn">
+    ← Back to Groups
+</a>
+
+</body>
+</html>

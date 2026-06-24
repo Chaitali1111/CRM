@@ -14,13 +14,13 @@
 }
 
 body{
-    font-family: 'Segoe UI', sans-serif;
+    font-family:'Segoe UI',sans-serif;
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
 
-    background: linear-gradient(
+    background:linear-gradient(
         135deg,
         #2563eb,
         #1e293b
@@ -31,7 +31,6 @@ body{
     width:420px;
     background:white;
     padding:40px;
-
     border-radius:20px;
 
     box-shadow:
@@ -54,6 +53,17 @@ h1{
     text-align:center;
     color:#6b7280;
     margin-bottom:30px;
+}
+
+.error-box{
+    background:#fee2e2;
+    color:#dc2626;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:15px;
+    text-align:center;
+    font-weight:bold;
+    border:1px solid #fca5a5;
 }
 
 input{
@@ -116,6 +126,12 @@ button:hover{
     </p>
 
     <form action="/login" method="post">
+
+        {% if error %}
+        <div class="error-box">
+            ❌ {{ error }}
+        </div>
+        {% endif %}
 
         <input
             type="email"
