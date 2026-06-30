@@ -584,12 +584,12 @@ def google_search(
     db: Session = Depends(get_db)
 ):
 
-    search_google_maps(
-        keyword,
-        category,
-        group_name,
-        db
-    )
+   # search_google_maps(
+    #    keyword,
+   #     category,
+    #    group_name,
+    #    db
+   # )
 
     return {
         "message": "Google Search Started"
