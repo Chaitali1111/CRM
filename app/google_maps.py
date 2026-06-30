@@ -16,7 +16,7 @@ def search_google_maps(keyword, category, group_name, db):
     import os
     options = Options()
 
-    options.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
+    options.binary_location = "/usr/bin/chromium"
 
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
@@ -24,7 +24,14 @@ def search_google_maps(keyword, category, group_name, db):
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(options=options)
+    from selenium.webdriver.chrome.service import Service
+
+    service = Service("/usr/bin/chromedriver")
+
+    driver = webdriver.Chrome(
+        service=service,
+        options=options
+    )
     driver.maximize_window()
 
     # Open Google Maps
