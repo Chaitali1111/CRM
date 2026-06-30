@@ -181,39 +181,44 @@
             </a>
 
             <form
-                action="/import-csv"
-                method="post"
-                enctype="multipart/form-data"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:10px;
-                    margin:0;
-                "
-            >
-
-                
-
-                <button
-                    type="submit"
+                    action="/import-csv"
+                    method="post"
+                    enctype="multipart/form-data"
                     style="
-                        background:#16a34a;
-                        color:white;
-                        border:none;
-                        padding:14px 40px;
-                        border-radius:8px;
-                        cursor:pointer;
-                        font-weight:bold;
-                        width:180px;
                         display:flex;
-                        justify-content:center;
                         align-items:center;
-                        min-width:220px;
-                        text-align:center;
-                        display:inline-block;
+                        gap:10px;
+                        margin:0;
                     "
                 >
-                    📤 Import CSV
+
+                <input
+                        type="file"
+                        name="file"
+                        accept=".csv"
+                        required
+                        style="
+                            width:250px;
+                        "
+                >
+        
+                
+
+               <button
+                            type="submit"
+                            style="
+                                background:#16a34a;
+                                color:white;
+                                padding:14px 40px;
+                                border-radius:8px;
+                                font-weight:bold;
+                                width:180px;
+                                text-align:center;
+                                border:none;
+                                cursor:pointer;
+                            "
+                >
+                            📤 Import CSV
                 </button>
 
             </form>

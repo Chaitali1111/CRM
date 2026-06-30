@@ -23,6 +23,7 @@ class Lead(Base):
     category = Column(String)
     group_name = Column(String)
     city = Column(String)
+    website = Column(String)
 
 
 class Campaign(Base):

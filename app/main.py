@@ -11,6 +11,8 @@ from app.models import User, Lead, Campaign
 from fastapi.responses import StreamingResponse
 import csv
 import io
+from googlesearch import search
+from app.google_maps import search_google_maps
 
 Base.metadata.create_all(bind=engine)
 
@@ -279,7 +281,11 @@ def import_csv(
     db: Session = Depends(get_db)
 ):
 
-    contents = file.file.read().decode("utf-8")
+    try:
+             contents = file.file.read().decode("utf-8")
+    except:
+            file.file.seek(0)
+            contents = file.file.read().decode("latin-1")
 
     csv_reader = csv.DictReader(io.StringIO(contents))
 
@@ -542,3 +548,49 @@ def view_pdf(filename: str):
         media_type="application/pdf"
 
     )
+
+
+
+@app.get("/google-test")
+def google_test():
+
+    results = []
+
+    for url in search("Mobile Shop Mumbai", num_results=10):
+        results.append(url)
+
+    return {
+        "results": results
+    }
+
+
+# ---------------- GOOGLE SEARCH PAGE ----------------
+
+@app.get("/google-search")
+def google_search_page(request: Request):
+    return templates.TemplateResponse(
+        "google_search.html",
+        {"request": request}
+    )
+
+
+# ---------------- GOOGLE SEARCH ----------------
+
+@app.post("/google-search")
+def google_search(
+    keyword: str = Form(...),
+    category: str = Form(""),
+    group_name: str = Form(""),
+    db: Session = Depends(get_db)
+):
+
+    search_google_maps(
+        keyword,
+        category,
+        group_name,
+        db
+    )
+
+    return {
+        "message": "Google Search Started"
+    }
