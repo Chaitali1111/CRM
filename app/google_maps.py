@@ -3,6 +3,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 from app.models import Lead
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 def search_google_maps(keyword, category, group_name, db):
@@ -48,10 +51,24 @@ def search_google_maps(keyword, category, group_name, db):
     print("Searching Google Maps...")
 
     # Wait for results
-    time.sleep(8)
 
-    # Left panel
-    panel = driver.find_element(By.XPATH, '//div[@role="feed"]')
+    wait = WebDriverWait(driver, 30)
+
+    try:
+        panel = wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@role="feed"]')
+            )
+        )
+    except TimeoutException:
+
+        print("Feed not found.")
+
+        driver.save_screenshot("maps_error.png")
+
+        driver.quit()
+
+        return
 
     # Business links
     cards = panel.find_elements(
@@ -73,7 +90,11 @@ def search_google_maps(keyword, category, group_name, db):
     for i in range(min(10, len(cards))):
 
         # Reload cards every time
-        panel = driver.find_element(By.XPATH, '//div[@role="feed"]')
+        panel = wait.until(
+            EC.presence_of_element_located
+                 ( (By.XPATH, '//div[@role="feed"]')
+            )
+        )
         cards = panel.find_elements(
             By.CSS_SELECTOR,
             'a[href*="/place/"]'
