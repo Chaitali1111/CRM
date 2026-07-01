@@ -579,15 +579,13 @@ def google_search_page(request: Request):
 @app.post("/google-search")
 def google_search(
     keyword: str = Form(...),
-    category: str = Form(""),
-    group_name: str = Form(""),
     db: Session = Depends(get_db)
 ):
 
     search_google_maps(
         keyword,
-        category,
-        group_name,
+        "",
+        "",
         db
     )
 

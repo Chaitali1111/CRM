@@ -3,9 +3,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 from app.models import Lead
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+import os
 
 
 def search_google_maps(keyword, category, group_name, db):
@@ -15,8 +16,6 @@ def search_google_maps(keyword, category, group_name, db):
     print("Group   :", group_name)
 
     # Start Chrome
-    from selenium.webdriver.chrome.options import Options
-    import os
     options = Options()
 
     options.binary_location = "/usr/bin/chromium"
@@ -35,6 +34,7 @@ def search_google_maps(keyword, category, group_name, db):
         service=service,
         options=options
     )
+
     driver.maximize_window()
 
     # Open Google Maps
@@ -51,24 +51,13 @@ def search_google_maps(keyword, category, group_name, db):
     print("Searching Google Maps...")
 
     # Wait for results
+    wait = WebDriverWait(driver,30)
 
-    wait = WebDriverWait(driver, 30)
-
-    try:
-        panel = wait.until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//div[@role="feed"]')
-            )
-        )
-    except TimeoutException:
-
-        print("Feed not found.")
-
-        driver.save_screenshot("maps_error.png")
-
-        driver.quit()
-
-        return
+    panel = wait.until(
+    EC.presence_of_element_located(
+        (By.XPATH,'//div[@role="feed"]')
+    )
+)
 
     # Business links
     cards = panel.find_elements(
@@ -90,11 +79,7 @@ def search_google_maps(keyword, category, group_name, db):
     for i in range(min(10, len(cards))):
 
         # Reload cards every time
-        panel = wait.until(
-            EC.presence_of_element_located
-                 ( (By.XPATH, '//div[@role="feed"]')
-            )
-        )
+        panel = driver.find_element(By.XPATH, '//div[@role="feed"]')
         cards = panel.find_elements(
             By.CSS_SELECTOR,
             'a[href*="/place/"]'
