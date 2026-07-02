@@ -76,6 +76,51 @@ Search Google Maps
 
 </form>
 
+{% if results %}
+
+<br><br>
+
+<h3>Google Search Results</h3>
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+<tr>
+    <th>Company</th>
+    <th>Phone</th>
+    <th>Address</th>
+    <th>Website</th>
+    <th>Action</th>
+</tr>
+
+{% for item in results %}
+
+<tr>
+
+    <td>{{ item.company_name }}</td>
+
+    <td>{{ item.phone }}</td>
+
+    <td>{{ item.address }}</td>
+
+    <td>
+        <a href="{{ item.website }}" target="_blank">
+            Visit
+        </a>
+    </td>
+
+    <td>
+        <button type="button">
+            Save
+        </button>
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endif %}
 </div>
 
 </body>

@@ -12,6 +12,7 @@ from app.models import Lead
 
 
 def search_google_maps(keyword, category, group_name, db):
+    results = []
 
     print("Keyword :", keyword)
     print("Category:", category)
@@ -111,8 +112,18 @@ def search_google_maps(keyword, category, group_name, db):
         ).get_attribute("href")
     except:
         website = "Not Available"
+    
+    results.append({
+        "company_name": name,
+        "phone": phone,
+        "address": address,
+        "website": website,
+        "rating": rating
+    })  
 
     print("=" * 60)
+
+
     print("Business Name :", name)
     print("Rating        :", rating)
     print("Address       :", address)
@@ -143,3 +154,4 @@ def search_google_maps(keyword, category, group_name, db):
         print("Business saved successfully.")
 
     driver.quit()
+    return results

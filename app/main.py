@@ -578,17 +578,23 @@ def google_search_page(request: Request):
 
 @app.post("/google-search")
 def google_search(
+    request: Request,
     keyword: str = Form(...),
     db: Session = Depends(get_db)
 ):
 
-    search_google_maps(
+    results = search_google_maps(
         keyword,
         "",
         "",
         db
     )
 
-    return {
-        "message": "Google Search Started"
-    }
+    return templates.TemplateResponse(
+        "google_search.html",
+        {
+            "request": request,
+            "results": results,
+            "keyword": keyword
+        }
+    )
