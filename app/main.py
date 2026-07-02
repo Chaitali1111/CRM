@@ -14,6 +14,7 @@ import io
 from googlesearch import search
 from app.google_maps import search_google_maps
 
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
