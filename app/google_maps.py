@@ -19,6 +19,14 @@ def search_google_maps(keyword, category, group_name, db):
     print("Group   :", group_name)
 
     options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--remote-debugging-port=9222")
+
 
     if platform.system() == "Windows":
         service = Service(ChromeDriverManager().install())
@@ -34,7 +42,7 @@ def search_google_maps(keyword, category, group_name, db):
             options=options
         )
 
-    driver.maximize_window()
+    # driver.maximize_window()
 
     driver.get("https://www.google.com/maps")
 
