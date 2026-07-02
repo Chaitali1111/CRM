@@ -109,9 +109,19 @@ Search Google Maps
     </td>
 
     <td>
-        <button type="button">
-            Save
-        </button>
+
+    <form action="/save-google-lead" method="post">
+    <input type="hidden" name="company_name" value="{{ item.company_name }}">
+    <input type="hidden" name="mobile_number" value="{{ item.phone }}">
+    <input type="hidden" name="address" value="{{ item.address }}">
+    <input type="hidden" name="website" value="{{ item.website }}">
+
+    <button type="submit">
+        Save
+    </button>
+
+    </form>
+
     </td>
 
 </tr>

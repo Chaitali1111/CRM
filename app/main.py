@@ -598,3 +598,37 @@ def google_search(
             "keyword": keyword
         }
     )
+
+
+@app.post("/save-google-lead")
+def save_google_lead(
+    company_name: str = Form(...),
+    mobile_number: str = Form(""),
+    address: str = Form(""),
+    website: str = Form(""),
+    db: Session = Depends(get_db)
+):
+
+    existing = db.query(Lead).filter(
+        Lead.company_name == company_name
+    ).first()
+
+    if not existing:
+
+        lead = Lead(
+            company_name=company_name,
+            mobile_number=mobile_number,
+            address=address,
+            website=website,
+            category="",
+            group_name="",
+            city=""
+        )
+
+        db.add(lead)
+        db.commit()
+
+    return RedirectResponse(
+        url="/leads",
+        status_code=303
+    )
